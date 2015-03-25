@@ -24,7 +24,7 @@ function pms_params($message)
     }
 }
 
-function pms_message($service, $method, $params)
+function pms_message($service, $method, $params = array())
 {
     $object = array(
         's'=>$service,

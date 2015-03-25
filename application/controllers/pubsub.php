@@ -69,11 +69,20 @@ class SubService extends CI_Controller
         if ($result) {
             $this -> didAddObserver($conn);
         }
+        else {
+            $this -> didReceivedError($conn, '403 - Invalid Token');
+        }
     }
 
     public function removeObserver($conn)
     {
-        $this->Sub_manager->removeObserver($conn);
+        $result = $this->Sub_manager->removeObserver($conn);
+        if ($result) {
+            $this -> didRemoveObserver($conn);
+        }
+        else {
+            $this -> didReceivedError($conn, '500 - Unknowed Error');
+        }
     }
 
     public function didAddObserver($conn)
@@ -84,11 +93,13 @@ class SubService extends CI_Controller
 
     public function didRemoveObserver($conn)
     {
-
+        $msg = pms_message("sub", "didRemoveObserver");
+        $conn->send($msg);
     }
 
     public function didReceivedError($conn, $error_description)
     {
-
+        $msg = pms_message("sub", "didReceivedError", array("error_description"=>$error_description));
+        $conn->send($msg);
     }
 }
