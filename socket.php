@@ -1,4 +1,8 @@
 <?php
+
+//@see https://github.com/reactphp/event-loop
+$runloop = null;
+
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 

@@ -21,17 +21,31 @@ class Sub_manager extends CI_Model
     {
         if ($this->Token_manager->verify_entry($token)) {
             //验证通过
-            print_r($token);
+            if (!isset($this -> observers[(string)$token->user_id])) {
+                $this -> observers[(string)$token->user_id] = array();
+            }
+            $this -> observers[(string)$token->user_id][] = $conn;
+            $conn -> token = $token;
             return true;
         }
         else {
-            print_r('fail');
             return false;
         }
     }
 
-    public function removeObserver(ConnectionInterface $conn, Sub_entity $observer)
+    public function removeObserver(ConnectionInterface $conn)
     {
-
+        if (property_exists($conn, "token")) {
+            $token = $conn -> token;
+            if (isset($this -> observers[(string)$token->user_id])) {
+                foreach ($this -> observers[(string)$token->user_id] as $key => $value) {
+                    if ($conn == $value) {
+                        unset($this -> observers[(string)$token->user_id][$key]);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

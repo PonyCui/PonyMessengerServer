@@ -17,8 +17,11 @@ class PubSub extends CI_Controller implements MessageComponentInterface
         parent::__construct();
         $this->load->helpers('Pms_protocol');
         $this->load->model('Token_entity');
+        $this->load->model('Sub_service');
+        $this->load->model('Pub_service');
         $this->services = array(
-            'sub' => new SubService
+            'sub' => $this->Sub_service,
+            'pub' => $this->Pub_service
         );
         $this->clients = new \SplObjectStorage;
     }
@@ -45,61 +48,5 @@ class PubSub extends CI_Controller implements MessageComponentInterface
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
         $conn->close();
-    }
-}
-
-/**
- *
- */
-class SubService extends CI_Controller
-{
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->load->model('Sub_manager');
-    }
-
-    public function addObserver($conn, $params)
-    {
-        $tokenObject = new Token_entity;
-        $tokenObject -> user_id = isset($params['user_id']) ? $params['user_id'] : '';
-        $tokenObject -> session_token = isset($params['session_token']) ? $params['session_token'] : '';
-        $result = $this->Sub_manager->addObserver($conn, $tokenObject);
-        if ($result) {
-            $this -> didAddObserver($conn);
-        }
-        else {
-            $this -> didReceivedError($conn, '403 - Invalid Token');
-        }
-    }
-
-    public function removeObserver($conn)
-    {
-        $result = $this->Sub_manager->removeObserver($conn);
-        if ($result) {
-            $this -> didRemoveObserver($conn);
-        }
-        else {
-            $this -> didReceivedError($conn, '500 - Unknowed Error');
-        }
-    }
-
-    public function didAddObserver($conn)
-    {
-        $msg = pms_message("sub", "didAddObserver");
-        $conn->send($msg);
-    }
-
-    public function didRemoveObserver($conn)
-    {
-        $msg = pms_message("sub", "didRemoveObserver");
-        $conn->send($msg);
-    }
-
-    public function didReceivedError($conn, $error_description)
-    {
-        $msg = pms_message("sub", "didReceivedError", array("error_description"=>$error_description));
-        $conn->send($msg);
     }
 }

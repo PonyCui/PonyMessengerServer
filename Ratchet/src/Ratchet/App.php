@@ -71,6 +71,8 @@ class App {
 
         if (null === $loop) {
             $loop = LoopFactory::create();
+            global $runloop;
+            $runloop = $loop;
         }
 
         $this->httpHost = $httpHost;
