@@ -6,10 +6,17 @@
 class Sub_service extends CI_Model
 {
 
+    public $super_services = array();
+
     public function __construct()
     {
         parent::__construct();
         $this -> load -> model('Sub_manager');
+    }
+
+    public function observers($user_id)
+    {
+        return $this->Sub_manager->observers($user_id);
     }
 
     public function addObserver($conn, $params)

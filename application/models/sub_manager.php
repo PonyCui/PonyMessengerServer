@@ -48,4 +48,14 @@ class Sub_manager extends CI_Model
         }
         return false;
     }
+
+    public function observers($user_id)
+    {
+        if (isset($this->observers[(string)$user_id])) {
+            return $this->observers[(string)$user_id];
+        }
+        else {
+            return array();
+        }
+    }
 }

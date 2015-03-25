@@ -3,6 +3,8 @@
 class Pub_service extends CI_Model
 {
 
+    public $super_services = array();
+
     public function __construct()
     {
         parent::__construct();
@@ -14,18 +16,25 @@ class Pub_service extends CI_Model
     {
         global $runloop;
         $runloop -> addPeriodicTimer(5, function() {
-            $this -> _intevalPush();
+            $this -> _intervalPush();
         });
     }
 
-    private function _intevalPush()
+    private function _intervalPush()
     {
-        echo "[IntevalPush]", "\n";
-        $this -> Pub_manager -> messages();
+        $messages = $this -> Pub_manager -> messages();
+        foreach ($messages as $message) {
+            $this -> post($message);
+        }
     }
 
-    private function send($message)
+    public function post(Pub_entity $message)
     {
-
+        $conns = $this->super_services['sub']->observers($message->sub_user_id);
+        foreach ($conns as $conn) {
+            $msg = pms_message($message->sub_service, $message->sub_method, json_decode($message->sub_params, true));
+            print_r($msg);
+            $conn -> send($msg);
+        }
     }
 }

@@ -16,8 +16,6 @@ class Pub_manager extends CI_Model
     {
         $this -> db -> from('pub');
         $query = $this -> db -> get();
-        foreach ($query->result('Pub_entity') as $row) {
-            print_r($row);
-        }
+        return $query -> result('Pub_entity');
     }
 }

@@ -9,7 +9,7 @@ class Token extends CI_Controller
     {
         parent::__construct();
         $this -> load -> model('Token_manager', '', true);
-        $this -> load -> model('Token_entity', '', true);
+        $this -> load -> model('Token_entity');
     }
 
     public function index()

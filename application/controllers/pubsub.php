@@ -17,13 +17,20 @@ class PubSub extends CI_Controller implements MessageComponentInterface
         parent::__construct();
         $this->load->helpers('Pms_protocol');
         $this->load->model('Token_entity');
+        $this->configureServices();
+        $this->clients = new \SplObjectStorage;
+    }
+
+    public function configureServices()
+    {
         $this->load->model('Sub_service');
         $this->load->model('Pub_service');
         $this->services = array(
             'sub' => $this->Sub_service,
             'pub' => $this->Pub_service
         );
-        $this->clients = new \SplObjectStorage;
+        $this->Sub_service->super_services = $this->services;
+        $this->Pub_service->super_services = $this->services;
     }
 
     public function onOpen(ConnectionInterface $conn) {
