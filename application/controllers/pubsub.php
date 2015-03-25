@@ -78,7 +78,8 @@ class SubService extends CI_Controller
 
     public function didAddObserver($conn)
     {
-
+        $msg = pms_message("sub", "didAddObserver");
+        $conn->send($msg);
     }
 
     public function didRemoveObserver($conn)

@@ -23,3 +23,13 @@ function pms_params($message)
         return $JSONObject['p'];
     }
 }
+
+function pms_message($service, $method, $params)
+{
+    $object = array(
+        's'=>$service,
+        'm'=>$method,
+        'p'=>$params
+    );
+    return json_encode($object);
+}

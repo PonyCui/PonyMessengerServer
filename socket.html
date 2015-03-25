@@ -1,0 +1,68 @@
+<html><body><h1>It works!</h1></body></html>
+
+<script charset="utf-8">
+    var service = {
+        conn:null,
+        sub:null
+    }
+</script>
+
+<script charset="utf-8">
+    var ConnService = function(){
+
+        this.conn = null;
+
+        this.init = function() {
+            this.conn = new WebSocket("ws://localhost:9090/pubsub");
+            this.configureHandler();
+        }
+
+        this.configureHandler = function() {
+            this.conn.onopen = function(e) {
+                console.log('onopen');
+                service.sub.init();
+            }
+
+            this.conn.onclose = function(e) {
+                console.log('onclose');
+            }
+
+            this.conn.onmessage = function(e) {
+                console.log('onmessage:'+e);
+            }
+
+            this.conn.onerror = function(e) {
+                console.log('onerror:'+e);
+            }
+        }
+    }
+</script>
+
+<script charset="utf-8">
+    var SubService = function(){
+
+        var user_id = "1";
+
+        var session_token = "testToken";
+
+        this.init = function() {
+            this.addObserver();
+        }
+
+        this.addObserver = function() {
+            service.conn.conn.send('{"s":"sub", "m":"addObserver", "p": {"user_id":"'+user_id+'","session_token":"'+session_token+'"}}');
+        }
+
+        this.didAddObserver = function(e) {
+
+        }
+    }
+</script>
+
+<script charset="utf-8">
+
+    service.conn = new ConnService;
+    service.sub = new SubService;
+    service.conn.init();
+
+</script>
