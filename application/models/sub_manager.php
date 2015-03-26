@@ -20,12 +20,15 @@ class Sub_manager extends CI_Model
             //验证通过
             if (defined("PUBSUB_CHANNEL")) {
                 $mmc = memcache_init();
-                $observers = memcache_get($mmc, 'channel.observers.'.(string)$token->userid);
+                $observers = memcache_get($mmc, 'channel.observers.'.(string)$token->user_id);
                 if (empty($observers)) {
                     $observers = array();
                 }
+                else {
+                    $observers = unserialize($observers);
+                }
                 $observers[] = $conn;
-                memcache_set($mmc, 'channel.observers.'.(string)$token->userid, $observers);
+                memcache_set($mmc, 'channel.observers.'.(string)$token->user_id, serialize($observers));
             }
             else {
                 if (!isset($this -> observers[(string)$token->user_id])) {
@@ -47,12 +50,13 @@ class Sub_manager extends CI_Model
             $token = $conn -> token;
             if (defined("PUBSUB_CHANNEL")) {
                 $mmc = memcache_init();
-                $observers = memcache_get($mmc, 'channel.observers.'.(string)$token->userid);
+                $observers = memcache_get($mmc, 'channel.observers.'.(string)$token->user_id);
                 if (!empty($observers)) {
+                    $observers = unserialize($observers);
                     foreach ($observers as $key => $value) {
                         if ($conn == $value) {
                             unset($observers[$key]);
-                            memcache_set($mmc, 'channel.observers.'.(string)$token->userid, $observers);
+                            memcache_set($mmc, 'channel.observers.'.(string)$token->user_id, serialize($observers));
                             return true;
                         }
                     }
@@ -78,7 +82,7 @@ class Sub_manager extends CI_Model
             $mmc = memcache_init();
             $observers = memcache_get($mmc, 'channel.observers.'.(string)$user_id);
             if (!empty($observers)) {
-                return $observers;
+                return unserialize($observers);
             }
             else {
                 return array();

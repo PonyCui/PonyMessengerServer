@@ -31,6 +31,14 @@ class Pub_service extends CI_Model
         }
     }
 
+    public function intervalPush()
+    {
+        for ($i=0; $i<60; $i++) {
+            $this -> _intervalPush();
+            sleep(1);
+        }
+    }
+
     public function post(Pub_entity $message)
     {
         $conns = $this->super_services['sub']->observers($message->sub_user_id);

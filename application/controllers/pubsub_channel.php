@@ -63,6 +63,11 @@ class PubSub_Channel extends CI_Controller
         $conn -> detach();
     }
 
+    public function intervalPush()
+    {
+        $this->Pub_service->intervalPush();
+    }
+
 }
 
 /**
