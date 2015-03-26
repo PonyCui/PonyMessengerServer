@@ -14,6 +14,9 @@ class Pub_service extends CI_Model
 
     private function _configureTimer()
     {
+        if (defined("PUBSUB_CHANNEL")) {
+            return;//Not Supported
+        }
         global $runloop;
         $runloop -> addPeriodicTimer(0.5, function() {
             $this -> _intervalPush();
