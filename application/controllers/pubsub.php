@@ -43,7 +43,7 @@ class PubSub extends CI_Controller implements MessageComponentInterface
         $params = pms_params($msg);
         if (isset($this->services[$service])) {
             if (method_exists($this->services[$service], $method)) {
-                if (property_exists($from, "token") &&
+                if (isset($from->token) &&
                     $from->token->canAccess($service)) {
                     //连接已认证
                     $this->services[$service] -> $method($from, $params);

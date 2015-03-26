@@ -94,7 +94,9 @@
 
 <script charset="utf-8">
     var PubService = function() {
-        
+        this.submit = function() {
+            service.conn.conn.send('{"s":"pub", "m":"submit", "p": {"user_id": "1", "service": "test", "method": "test", "params":{"k": "v"}}}');
+        }
     }
 </script>
 
@@ -115,5 +117,6 @@
     service.conn.init();
 
     service.test = new TestService;
+    service.pub = new PubService;
 
 </script>

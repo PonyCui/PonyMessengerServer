@@ -35,7 +35,7 @@ class Sub_manager extends CI_Model
 
     public function removeObserver(ConnectionInterface $conn)
     {
-        if (property_exists($conn, "token")) {
+        if (isset($conn -> token)) {
             $token = $conn -> token;
             if (isset($this -> observers[(string)$token->user_id])) {
                 foreach ($this -> observers[(string)$token->user_id] as $key => $value) {
