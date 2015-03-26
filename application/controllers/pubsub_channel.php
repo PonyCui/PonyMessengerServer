@@ -105,10 +105,15 @@ class PubSub_Channel_Connection
         }
     }
 
+    public function __isset($property_name)
+    {
+        return isset($this -> _connection_params[$property_name]);
+    }
+
     private function _save()
     {
         $mmc = memcache_init();
-        memcache_set($mmc, "channel.connection.".$this->_connection_identifier, $this -> _connection_params);
+        memcache_set($mmc, "channel.connection.".$this->_connection_identifier, serialize($this -> _connection_params));
     }
 
     public function _restore()
@@ -117,7 +122,7 @@ class PubSub_Channel_Connection
         $restore_object =
         memcache_get($mmc, "channel.connection.".$this->_connection_identifier);
         if (!empty($restore_object)) {
-            $this -> _connection_params = $restore_object;
+            $this -> _connection_params = unserialize($restore_object);
         }
     }
 }
