@@ -1,13 +1,39 @@
-<html><body><h1>It works!</h1></body></html>
+<html>
+<head>
+    <title>PMS - Publiser</title>
+</head>
+<body>
+    <h1>
+        PonyMessengerServer - Publiser Demo
+        <p style="font-size:18px;line-height:20px;">
+            <form onsubmit="service.pub.submit($('#textInput').val());$('#textInput').val('');return false;">
+                <input id="textInput" style="height:20px;" placeholder="Send Text Message" />
+                <button type="submit">Send</button>
+            </form>
+        </p>
+    </h1>
+</body>
+<script charset="utf-8" src="http://lib.sinaapp.com/js/jquery/2.0.3/jquery-2.0.3.min.js"></script>
+</html>
 
 <script charset="utf-8">
     var service = {
+        console:null,
         conn:null,
         sub:null
     }
 </script>
 
 <script charset="utf-8">
+
+    var ConsoleService = function() {
+        this.log = function(logString) {
+            console.log(logString);
+            var date = new Date();
+            $('h1').after('<p>'+date.toLocaleString()+' - '+logString+'</p>');
+        }
+    }
+
     var ConnService = function(){
 
         var _this = this;
@@ -30,24 +56,24 @@
             if (this.retryCount < 10) {
                 this.retryCount++;
                 setTimeout(this.init, 5000);
-                console.log('Will reconnect after 5s.');
+                service.console.log('Will reconnect after 5s.');
             }
         }
 
         this.configureHandler = function() {
             this.conn.onopen = function(e) {
-                console.log('onopen');
+                service.console.log('onopen');
                 _this.retryCount = 0;
                 service.sub.init();
             }
 
             this.conn.onclose = function(e) {
-                console.log('onclose:'+e.code);
+                service.console.log('onclose:'+e.code);
                 _this.retry();
             }
 
             this.conn.onmessage = function(e) {
-                console.log('onmessage:'+e);
+                service.console.log('onmessage:'+e);
                 var msg;
                 eval('msg = '+e.data);
                 var _service = msg.s;
@@ -61,7 +87,7 @@
             }
 
             this.conn.onerror = function(e) {
-                console.log('onerror:'+e);
+                service.console.log('onerror:'+e);
             }
         }
     }
@@ -83,40 +109,29 @@
         }
 
         this.didAddObserver = function() {
-            console.log('didAddObserver');
+            service.console.log('didAddObserver');
         }
 
         this.didReceivedError = function(params) {
-            console.log('error - '+params.error_description);
+            service.console.log('error - '+params.error_description);
         }
     }
 </script>
 
 <script charset="utf-8">
     var PubService = function() {
-        this.submit = function() {
-            service.conn.conn.send('{"s":"pub", "m":"submit", "p": {"user_id": "1", "service": "test", "method": "test", "params":{"k": "v"}}}');
+        this.submit = function(text) {
+            service.conn.conn.send('{"s":"pub", "m":"submit", "p": {"user_id": "1", "service": "test", "method": "test", "params":{"text": "'+text+'"}}}');
         }
     }
 </script>
 
 <script charset="utf-8">
-    var TestService = function() {
 
-        this.test = function(params) {
-            console.log('Test Service - Test Method - Parmas:'+params);
-        }
-
-    }
-</script>
-
-<script charset="utf-8">
-
+    service.console = new ConsoleService;
     service.conn = new ConnService;
     service.sub = new SubService;
-    service.conn.init();
-
-    service.test = new TestService;
     service.pub = new PubService;
+    service.conn.init();
 
 </script>
