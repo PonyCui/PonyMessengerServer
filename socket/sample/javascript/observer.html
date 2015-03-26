@@ -32,12 +32,13 @@
 
         var _this = this;
 
+        this.uri = "ws://localhost:9090/pubsub";
         this.conn = null;
         this.retryCount = 0;
 
         this.init = function() {
             try {
-                _this.conn = new WebSocket("ws://localhost:9090/pubsub");
+                _this.conn = new WebSocket(this.uri);
                 _this.configureHandler();
             } catch (e) {
                 if (e) {
@@ -127,8 +128,16 @@
     service.console = new ConsoleService;
     service.conn = new ConnService;
     service.sub = new SubService;
-    service.conn.init();
-
     service.test = new TestService;
+
+    if (window.location.href.indexOf('sinaapp.com') > 0) {
+        $.get("/index.php/pubsub", function(result){
+            service.conn.uri = result;
+            service.conn.init();
+        })
+    }
+    else {
+        service.conn.init();
+    }
 
 </script>

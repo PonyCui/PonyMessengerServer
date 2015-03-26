@@ -54,8 +54,8 @@ $db['default']['password'] = '';
 $db['default']['database'] = 'pms';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = 'pms_';
-$db['default']['pconnect'] = TRUE;
-$db['default']['db_debug'] = TRUE;
+$db['default']['pconnect'] = FALSE;
+$db['default']['db_debug'] = FALSE;
 $db['default']['cache_on'] = FALSE;
 $db['default']['cachedir'] = '';
 $db['default']['char_set'] = 'utf8';
@@ -63,6 +63,14 @@ $db['default']['dbcollat'] = 'utf8_general_ci';
 $db['default']['swap_pre'] = '';
 $db['default']['autoinit'] = TRUE;
 $db['default']['stricton'] = FALSE;
+
+if (defined("SAE_TMP_PATH")) {
+	$db['default']['hostname'] = SAE_MYSQL_HOST_M;
+	$db['default']['username'] = SAE_MYSQL_USER;
+	$db['default']['password'] = SAE_MYSQL_PASS;
+	$db['default']['database'] = SAE_MYSQL_DB;
+	$db['default']['port'] = SAE_MYSQL_PORT;
+}
 
 
 /* End of file database.php */

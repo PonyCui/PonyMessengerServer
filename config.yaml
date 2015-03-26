@@ -1,6 +1,6 @@
 name: ponymessenger
 version: 1
 handle:
- - rewrite: if( path == "/_sae/channel/connected" ) goto "/index.php/PubSub_Channel/connected"
- - rewrite: if( path == "/_sae/channel/disconnected" ) goto "/index.php/PubSub_Channel/disconnected"
- - rewrite: if( path == "/_sae/channel/message" ) goto "/index.php/PubSub_Channel/message"
+ - rewrite: if( path == "/_sae/channel/connected" ) goto "/index.php?c=pubsub_channel&m=connected"
+ - rewrite: if( path == "/_sae/channel/disconnected" ) goto "/index.php?c=pubsub_channel&m=disconnected"
+ - rewrite: if( path == "/_sae/channel/message" ) goto "/index.php?c=pubsub_channel&m=message"
