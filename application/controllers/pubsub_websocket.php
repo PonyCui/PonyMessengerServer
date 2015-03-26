@@ -4,19 +4,6 @@ use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
 /**
- * Factory Class
- */
-class PubSub
-{
-    static public function instance($way = 'WebSocket')
-    {
-        $class_name = 'PubSub_'.$way;
-        return new $class_name;
-    }
-}
-
-
-/**
  * PMS PubSub Service - WebSocket
  */
 class PubSub_WebSocket extends CI_Controller implements MessageComponentInterface
@@ -77,13 +64,4 @@ class PubSub_WebSocket extends CI_Controller implements MessageComponentInterfac
     public function onError(ConnectionInterface $conn, \Exception $e) {
         $conn->close();
     }
-}
-
-/**
- *
- */
-class PubSub_Channel extends CI_Controller
-{
-
-
 }
