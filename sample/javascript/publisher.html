@@ -70,7 +70,7 @@
 <script charset="utf-8">
     var SubService = function(){
 
-        var user_id = "1";
+        var user_id = "2";
 
         var session_token = "testToken";
 
@@ -93,9 +93,27 @@
 </script>
 
 <script charset="utf-8">
+    var PubService = function() {
+        
+    }
+</script>
+
+<script charset="utf-8">
+    var TestService = function() {
+
+        this.test = function(params) {
+            console.log('Test Service - Test Method - Parmas:'+params);
+        }
+
+    }
+</script>
+
+<script charset="utf-8">
 
     service.conn = new ConnService;
     service.sub = new SubService;
     service.conn.init();
+
+    service.test = new TestService;
 
 </script>

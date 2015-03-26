@@ -1,0 +1,113 @@
+<html><body><h1>It works!</h1></body></html>
+
+<script charset="utf-8">
+    var service = {
+        conn:null,
+        sub:null
+    }
+</script>
+
+<script charset="utf-8">
+    var ConnService = function(){
+
+        var _this = this;
+
+        this.conn = null;
+        this.retryCount = 0;
+
+        this.init = function() {
+            try {
+                _this.conn = new WebSocket("ws://localhost:9090/pubsub");
+                _this.configureHandler();
+            } catch (e) {
+                if (e) {
+                    _this.retry();
+                }
+            }
+        }
+
+        this.retry = function() {
+            if (this.retryCount < 10) {
+                this.retryCount++;
+                setTimeout(this.init, 5000);
+                console.log('Will reconnect after 5s.');
+            }
+        }
+
+        this.configureHandler = function() {
+            this.conn.onopen = function(e) {
+                console.log('onopen');
+                _this.retryCount = 0;
+                service.sub.init();
+            }
+
+            this.conn.onclose = function(e) {
+                console.log('onclose:'+e.code);
+                _this.retry();
+            }
+
+            this.conn.onmessage = function(e) {
+                console.log('onmessage:'+e);
+                var msg;
+                eval('msg = '+e.data);
+                var _service = msg.s;
+                var _method = msg.m;
+                var _params = msg.p;
+                if (_service in service) {
+                    if (_method in service[_service]) {
+                        service[_service][_method](_params);
+                    }
+                }
+            }
+
+            this.conn.onerror = function(e) {
+                console.log('onerror:'+e);
+            }
+        }
+    }
+</script>
+
+<script charset="utf-8">
+    var SubService = function(){
+
+        var user_id = "1";
+
+        var session_token = "testToken";
+
+        this.init = function() {
+            this.addObserver();
+        }
+
+        this.addObserver = function() {
+            service.conn.conn.send('{"s":"sub", "m":"addObserver", "p": {"user_id":"'+user_id+'","session_token":"'+session_token+'"}}');
+        }
+
+        this.didAddObserver = function() {
+            console.log('didAddObserver');
+        }
+
+        this.didReceivedError = function(params) {
+            console.log('error - '+params.error_description);
+        }
+    }
+</script>
+
+<script charset="utf-8">
+    var TestService = function() {
+
+        this.test = function(params) {
+            console.log('Test Service - Test Method - Parmas:'+params);
+        }
+
+    }
+</script>
+
+<script charset="utf-8">
+
+    service.conn = new ConnService;
+    service.sub = new SubService;
+    service.conn.init();
+
+    service.test = new TestService;
+
+</script>

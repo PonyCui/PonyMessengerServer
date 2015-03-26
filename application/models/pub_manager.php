@@ -16,6 +16,14 @@ class Pub_manager extends CI_Model
     {
         $this -> db -> from('pub');
         $query = $this -> db -> get();
-        return $query -> result('Pub_entity');
+        $result = $query -> result('Pub_entity');
+        $query -> free_result();
+        return $result;
+    }
+
+    public function addMessage(Pub_entity $message)
+    {
+        $message -> pub_id = null;
+        $this -> db -> insert('pub', $message);
     }
 }

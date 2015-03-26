@@ -15,7 +15,7 @@ class Pub_service extends CI_Model
     private function _configureTimer()
     {
         global $runloop;
-        $runloop -> addPeriodicTimer(5, function() {
+        $runloop -> addPeriodicTimer(30, function() {
             $this -> _intervalPush();
         });
     }
@@ -33,8 +33,12 @@ class Pub_service extends CI_Model
         $conns = $this->super_services['sub']->observers($message->sub_user_id);
         foreach ($conns as $conn) {
             $msg = pms_message($message->sub_service, $message->sub_method, json_decode($message->sub_params, true));
-            print_r($msg);
             $conn -> send($msg);
         }
+    }
+
+    public function submit(Pub_entity $message)
+    {
+        $this -> Pub_manager -> addMessage($message);
     }
 }

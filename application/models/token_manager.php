@@ -11,10 +11,18 @@ class Token_manager extends CI_Model
     **/
     public function verify_entry(Token_entity $entity)
     {
+        $this -> db -> start_cache();
         $this -> db -> from('token');
         $this -> db -> where('user_id', $entity -> user_id);
         $this -> db -> where('session_token', $entity -> session_token);
         $count = $this -> db -> count_all_results();
+        if ($count > 0) {
+            $query = $this -> db -> get();
+            $entity -> session_access = $query -> row(0, 'Token_entity') -> session_access;
+            $query -> free_result();
+        }
+        $this -> db -> stop_cache();
+        $this -> db -> flush_cache();
         return $count > 0;
     }
 }
