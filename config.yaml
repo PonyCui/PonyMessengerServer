@@ -1,0 +1,6 @@
+name: ponymessenger
+version: 1
+handle:
+ - rewrite: if( path == "/_sae/channel/connected" ) goto "/action.php?action=connected"
+ - rewrite: if( path == "/_sae/channel/disconnected" ) goto "/action.php?action=disconnected"
+ - rewrite: if( path == "/_sae/channel/message" ) goto "/action.php?action=message"
