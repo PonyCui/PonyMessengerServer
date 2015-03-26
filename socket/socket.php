@@ -11,5 +11,5 @@ require __DIR__ . '/../index.php';
 require __DIR__ . '/../application/controllers/pubsub.php';
 
 $app = new Ratchet\App('localhost', 9090);
-$app->route('/pubsub', new PubSub, array('*'));
+$app->route('/pubsub', PubSub::instance('WebSocket'), array('*'));
 $app->run();
