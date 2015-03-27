@@ -51,6 +51,11 @@ class Sub_service extends CI_Model
         }
     }
 
+    public function heartBeat($conn)
+    {
+        $this -> didReceivedHeartBeat($conn);
+    }
+
     public function didAddObserver($conn)
     {
         $msg = pms_message("sub", "didAddObserver");
@@ -60,6 +65,12 @@ class Sub_service extends CI_Model
     public function didRemoveObserver($conn)
     {
         $msg = pms_message("sub", "didRemoveObserver");
+        $conn->send($msg);
+    }
+
+    public function didReceivedHeartBeat($conn)
+    {
+        $msg = pms_message("sub", "didReceivedHeartBeat");
         $conn->send($msg);
     }
 
