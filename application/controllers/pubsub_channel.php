@@ -88,7 +88,10 @@ class PubSub_Channel_Connection
 
     public function send($message)
     {
-        $channel_instance = new SaeChannel();
+        static $channel_instance = null;
+        if (empty($channel_instance)) {
+            $channel_instance = new SaeChannel();
+        }
         $channel_instance -> sendMessage($this -> _connection_identifier, $message);
     }
 
