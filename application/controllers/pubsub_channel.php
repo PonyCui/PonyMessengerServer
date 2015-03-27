@@ -108,7 +108,7 @@ class PubSub_Channel_Connection
     public function __set($property_name, $value)
     {
         $this -> _connection_params[$property_name] = $value;
-        if($property_name == 'token') {
+        if($property_name == 'token' || $property_name == 'alive') {
             $this -> _save();
         }
     }
