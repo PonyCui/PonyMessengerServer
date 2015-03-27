@@ -76,7 +76,7 @@ class PubSub_Channel extends CI_Controller
 class PubSub_Channel_Connection
 {
 
-    private $_connection_identifier = null;
+    public  $_connection_identifier = null;
 
     private $_connection_params = array();
 

@@ -54,7 +54,7 @@ class Sub_manager extends CI_Model
                 if (!empty($observers)) {
                     $observers = unserialize($observers);
                     foreach ($observers as $key => $value) {
-                        if ($conn == $value) {
+                        if ($conn->_connection_identifier == $value->_connection_identifier) {
                             unset($observers[$key]);
                             memcache_set($mmc, 'channel.observers.'.(string)$token->user_id, serialize($observers));
                             return true;
