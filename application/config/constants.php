@@ -37,5 +37,8 @@ define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
 
 
+define('PMS_SALT', 'I*P#Z6i@$zd*3RZM^T8&1ZQt!nOjMB5N');
+
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */
