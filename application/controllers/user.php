@@ -32,7 +32,7 @@ class User extends CI_Controller
         }
     }
 
-    public function singin($email, $password)
+    public function signin($email, $password)
     {
         $entity = new User_entity;
         $entity -> email = $email;
