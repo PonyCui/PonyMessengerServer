@@ -21,6 +21,7 @@ class Sub_service extends CI_Model
 
     public function addObserver($conn, $params)
     {
+        $conn -> alive = time();
         $tokenObject = new Token_entity;
         $tokenObject -> user_id = isset($params['user_id']) ? $params['user_id'] : '';
         $tokenObject -> session_token = isset($params['session_token']) ? $params['session_token'] : '';
@@ -53,6 +54,7 @@ class Sub_service extends CI_Model
 
     public function heartBeat($conn)
     {
+        $conn -> alive = time();
         $this -> didReceivedHeartBeat($conn);
     }
 

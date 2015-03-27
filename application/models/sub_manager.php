@@ -110,7 +110,14 @@ class Sub_manager extends CI_Model
             $this->mmc = memcache_init();
             $observers = memcache_get($this->mmc, 'channel.observers.'.(string)$user_id);
             if (!empty($observers)) {
-                return unserialize($observers);
+                $observers = unserialize($observers);
+                foreach ($observers as $key => $observer) {
+                    if (isset($observer->alive) &&
+                        (time() - $observer->alive) > $this->config->item('pms')['sub']['connection_timeout']) {
+                        unset($observers[$key]);
+                    }
+                }
+                return $observers;
             }
             else {
                 return array();
@@ -118,7 +125,14 @@ class Sub_manager extends CI_Model
         }
         else {
             if (isset($this->observers[(string)$user_id])) {
-                return $this->observers[(string)$user_id];
+                $observers = $this->observers[(string)$user_id];
+                foreach ($observers as $key => $observer) {
+                    if (isset($observer->alive) &&
+                        (time() - $observer->alive) > $this->config->item('pms')['sub']['connection_timeout']) {
+                        unset($observers[$key]);
+                    }
+                }
+                return $observers;
             }
             else {
                 return array();
