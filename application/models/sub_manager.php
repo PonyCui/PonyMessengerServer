@@ -8,6 +8,12 @@ class Sub_manager extends CI_Model
 
     private $observers = array();
 
+    public  $last_error = array(
+        'error_code' => 0,
+        'error_description' => '',
+        'error_conn' => null
+    );
+
     public function __construct()
     {
         parent::__construct();
@@ -18,6 +24,10 @@ class Sub_manager extends CI_Model
     {
         if ($this->Token_manager->verify_entry($token)) {
             //验证通过
+            $conn -> token = $token;
+            $observers = null;
+
+            //取出持久层数据
             if (defined("PUBSUB_CHANNEL")) {
                 $mmc = memcache_init();
                 $observers = memcache_get($mmc, 'channel.observers.'.(string)$token->user_id);
@@ -27,19 +37,50 @@ class Sub_manager extends CI_Model
                 else {
                     $observers = unserialize($observers);
                 }
-                $observers[] = $conn;
-                memcache_set($mmc, 'channel.observers.'.(string)$token->user_id, serialize($observers));
             }
             else {
                 if (!isset($this -> observers[(string)$token->user_id])) {
                     $this -> observers[(string)$token->user_id] = array();
                 }
-                $this -> observers[(string)$token->user_id][] = $conn;
+                $observers = $this -> observers[(string)$token->user_id];
             }
-            $conn -> token = $token;
+
+            //检查超限
+            if (count($observers) >= $this->config->item('pms')['sub']['user_max_connections']) {
+                if ($this->config->item('pms')['sub']['user_over_connections_rule'] == 1) {
+                    //踢走最早登录的连接
+                    $conn_be_kicked = array_shift($observers);
+                    $observers[] = $conn;
+                    $this -> error(410, 'user connections over limit', $conn_be_kicked);
+                }
+                else if ($this->config->item('pms')['sub']['user_over_connections_rule'] == 2) {
+                    //禁止创建新连接
+                    $this -> error(410, 'user connections over limit');
+                    return false;
+                }
+                else {
+                    //未知的处理方式
+                    $this -> error(410, 'user connections over limit');
+                    return false;
+                }
+            }
+            else {
+                $observers[] = $conn;
+                $this -> success();
+            }
+
+            //加入持久层
+            if (defined("PUBSUB_CHANNEL")) {
+                memcache_set($mmc, 'channel.observers.'.(string)$token->user_id, serialize($observers));
+            }
+            else {
+                $this -> observers[(string)$token->user_id] = $observers;
+            }
+
             return true;
         }
         else {
+            $this -> error(403, 'invalid uid and token');
             return false;
         }
     }
@@ -97,4 +138,21 @@ class Sub_manager extends CI_Model
             }
         }
     }
+
+    public function success()
+    {
+        $this -> last_error = array(
+            'error_code' => 0,
+            'error_description' => '',
+            'error_conn' => null
+        );
+    }
+
+    public function error($code, $description, $conn = null)
+    {
+        $this -> last_error['error_code'] = $code;
+        $this -> last_error['error_description'] = $description;
+        $this -> last_error['error_conn'] = $conn;
+    }
+
 }

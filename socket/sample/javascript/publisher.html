@@ -44,7 +44,7 @@
 
         this.init = function() {
             try {
-                _this.conn = new WebSocket(this.uri);
+                _this.conn = new WebSocket(_this.uri);
                 _this.configureHandler();
             } catch (e) {
                 if (e) {

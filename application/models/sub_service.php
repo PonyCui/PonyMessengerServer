@@ -27,9 +27,16 @@ class Sub_service extends CI_Model
         $result = $this->Sub_manager->addObserver($conn, $tokenObject);
         if ($result) {
             $this -> didAddObserver($conn);
+            if (!empty($this->Sub_manager->last_error['error_code'])) {
+                $this -> didReceivedError($this->Sub_manager->last_error['error_conn'],
+                                          $this->Sub_manager->last_error['error_code'],
+                                          $this->Sub_manager->last_error['error_description']);
+            }
         }
         else {
-            $this -> didReceivedError($conn, '403 - Invalid Token');
+            $this -> didReceivedError($conn,
+                                      $this->Sub_manager->last_error['error_code'],
+                                      $this->Sub_manager->last_error['error_description']);
         }
     }
 
@@ -40,7 +47,7 @@ class Sub_service extends CI_Model
             $this -> didRemoveObserver($conn);
         }
         else {
-            $this -> didReceivedError($conn, '500 - Unknowed Error');
+            $this -> didReceivedError($conn, 500, 'Unknowed Error');
         }
     }
 
@@ -56,9 +63,9 @@ class Sub_service extends CI_Model
         $conn->send($msg);
     }
 
-    public function didReceivedError($conn, $error_description)
+    public function didReceivedError($conn, $error_code, $error_description)
     {
-        $msg = pms_message("sub", "didReceivedError", array("error_description"=>$error_description));
+        $msg = pms_message("sub", "didReceivedError", array("error_code"=>$error_code, "error_description"=>$error_description));
         $conn->send($msg);
     }
 }

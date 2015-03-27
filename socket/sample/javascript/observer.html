@@ -38,7 +38,7 @@
 
         this.init = function() {
             try {
-                _this.conn = new WebSocket(this.uri);
+                _this.conn = new WebSocket(_this.uri);
                 _this.configureHandler();
             } catch (e) {
                 if (e) {
@@ -108,7 +108,7 @@
         }
 
         this.didReceivedError = function(params) {
-            service.console.log('error - '+params.error_description);
+            service.console.log('[Error] code:'+params.error_code+',desc:'+params.error_description);
         }
     }
 </script>
