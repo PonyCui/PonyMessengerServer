@@ -80,8 +80,11 @@ class PubSub_Channel_Connection
 
     private $_connection_params = array();
 
+    private $mmc = null;
+
     public function __construct($connection_identifier)
     {
+        $this -> mmc = memcache_init();
         $this -> _connection_identifier = $connection_identifier;
         $this -> _restore();
     }
@@ -97,18 +100,25 @@ class PubSub_Channel_Connection
 
     public function detach()
     {
-        memcache_set($mmc, "channel.connection.".$this->_connection_identifier,"",-1);
+        memcache_set($this -> mmc, "channel.connection.".$this->_connection_identifier,"",-1);
     }
 
     public function __get($property_name)
     {
+        if ($property_name == 'alive') {
+            return $this -> _alive();
+        }
         return $this -> _connection_params[$property_name];
     }
 
     public function __set($property_name, $value)
     {
+        if ($property_name == 'alive') {
+            $this -> _setAlive($value);
+            return;
+        }
         $this -> _connection_params[$property_name] = $value;
-        if($property_name == 'token' || $property_name == 'alive') {
+        if($property_name == 'token') {
             $this -> _save();
         }
     }
@@ -120,17 +130,25 @@ class PubSub_Channel_Connection
 
     private function _save()
     {
-        $mmc = memcache_init();
-        memcache_set($mmc, "channel.connection.".$this->_connection_identifier, serialize($this -> _connection_params));
+        memcache_set($this -> mmc, "channel.connection.".$this->_connection_identifier, serialize($this -> _connection_params));
     }
 
     public function _restore()
     {
-        $mmc = memcache_init();
         $restore_object =
-        memcache_get($mmc, "channel.connection.".$this->_connection_identifier);
+        memcache_get($this -> mmc, "channel.connection.".$this->_connection_identifier);
         if (!empty($restore_object)) {
             $this -> _connection_params = unserialize($restore_object);
         }
+    }
+
+    private function _alive()
+    {
+        return memcache_get($this -> mmc, "channel.connection.alive.".$this->_connection_identifier);
+    }
+
+    private function _setAlive($timestamp)
+    {
+        memcache_set($this -> mmc, "channel.connection.alive.".$this->_connection_identifier, $timestamp);
     }
 }

@@ -112,7 +112,7 @@ class Sub_manager extends CI_Model
             if (!empty($observers)) {
                 $observers = unserialize($observers);
                 foreach ($observers as $key => $observer) {
-                    if (isset($observer->alive) &&
+                    if (!empty($observer->alive) &&
                         (time() - $observer->alive) > $this->config->item('pms')['sub']['connection_timeout']) {
                         unset($observers[$key]);
                     }
