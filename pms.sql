@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: 127.0.0.1
--- 生成日期: 2015 年 03 月 27 日 09:26
+-- 生成日期: 2015 年 03 月 28 日 00:08
 -- 服务器版本: 5.6.14
--- PHP 版本: 5.5.14
+-- PHP 版本: 5.4.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -72,3 +72,23 @@ CREATE TABLE IF NOT EXISTS `pms_user_base` (
 
 INSERT INTO `pms_user_base` (`user_id`, `email`, `password`) VALUES
 (9, 'ponycui@me.com', 'c4f34afe14817af7fbb175da2e609dd3');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `pms_user_information`
+--
+
+CREATE TABLE IF NOT EXISTS `pms_user_information` (
+  `user_id` bigint(20) unsigned NOT NULL,
+  `nickname` varchar(64) COLLATE utf16_bin NOT NULL,
+  `avatar` varchar(255) COLLATE utf16_bin NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
+
+--
+-- 转存表中的数据 `pms_user_information`
+--
+
+INSERT INTO `pms_user_information` (`user_id`, `nickname`, `avatar`) VALUES
+(9, 'PonyCui', 'http://tp4.sinaimg.cn/1961248227/180/5706181721/0');
