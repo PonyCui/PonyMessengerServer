@@ -13,11 +13,11 @@ class User extends CI_Controller
         $this->load->helper('Pms_output');
     }
 
-    public function signup($email, $password)
+    public function signup()
     {
         $entity = new User_entity;
-        $entity -> email = $email;
-        $entity -> setPassword($password);
+        $entity -> email = $this->input->post('email');
+        $entity -> setPassword($this->input->post('password'));
         if ($this->User_manager->add_user($entity)) {
             $token = $this->User_manager->verify_user($entity);
             if (!empty($token)) {
@@ -32,11 +32,11 @@ class User extends CI_Controller
         }
     }
 
-    public function signin($email, $password)
+    public function signin()
     {
         $entity = new User_entity;
-        $entity -> email = $email;
-        $entity -> setPassword($password);
+        $entity -> email = $this->input->post('email');
+        $entity -> setPassword($this->input->post('password'));
         $token = $this->User_manager->verify_user($entity);
         if (!empty($token)) {
             pms_output($token);
