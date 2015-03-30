@@ -58,4 +58,16 @@ class User extends CI_Controller
             pms_output(null, -1, 'user not exist.');
         }
     }
+
+    public function infos()
+    {
+        $ids = explode(',',$this->input->get_post('ids'));
+        $results = $this->User_manager->request_users_information($ids);
+        if (!empty($results)) {
+            pms_output($results);
+        }
+        else {
+            pms_output(null, -1, 'users not exist.');
+        }
+    }
 }

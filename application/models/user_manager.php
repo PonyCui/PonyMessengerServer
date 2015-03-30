@@ -54,4 +54,11 @@ class User_manager extends CI_Model
         return $entity;
     }
 
+    public function request_users_information($ids)
+    {
+        $this->db->from('user_information');
+        $this->db->where_in('user_id', $ids);
+        return $this->db->get()->result_array('User_info_entity');
+    }
+
 }
