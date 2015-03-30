@@ -39,7 +39,7 @@ class User_manager extends CI_Model
         $this->db->where('email', $entity->email);
         $this->db->where('password', $entity->password);
         $entity = $this->db->get()->row('0', 'User_entity');
-        if ($entity->user_id > 0) {
+        if (!empty($entity) && $entity->user_id > 0) {
             $this->load->model('Token_manager');
             return $this->Token_manager->request_token($entity);
         }
