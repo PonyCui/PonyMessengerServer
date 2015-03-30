@@ -45,4 +45,17 @@ class User extends CI_Controller
             pms_output(null, -1, 'wrong email and password.');
         }
     }
+
+    public function info()
+    {
+        $entity = new User_info_entity;
+        $entity -> user_id = $this->input->get_post('user_id');
+        $entity = $this->User_manager->request_user_information($entity);
+        if (!empty($entity)) {
+            pms_output($entity);
+        }
+        else {
+            pms_output(null, -1, 'user not exist.');
+        }
+    }
 }

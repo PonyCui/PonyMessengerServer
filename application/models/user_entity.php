@@ -17,3 +17,16 @@ class User_entity
         $this -> password = md5(PMS_SALT.$password.PMS_SALT);
     }
 }
+
+/**
+ *
+ */
+class User_info_entity
+{
+
+    public $user_id = null;
+
+    public $nickname = '';
+
+    public $avatar = '';
+}
