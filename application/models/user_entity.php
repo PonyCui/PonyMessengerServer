@@ -30,3 +30,16 @@ class User_info_entity
 
     public $avatar = '';
 }
+
+/**
+ *
+ */
+class User_relation_entity
+{
+
+    public $relation_id = null;
+
+    public $from_user_id = '';
+
+    public $to_user_id = '';
+}

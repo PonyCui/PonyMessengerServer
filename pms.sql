@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: 127.0.0.1
--- 生成日期: 2015 年 03 月 28 日 00:08
+-- 生成日期: 2015 年 03 月 31 日 13:12
 -- 服务器版本: 5.6.14
--- PHP 版本: 5.4.30
+-- PHP 版本: 5.5.14
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -50,7 +50,8 @@ CREATE TABLE IF NOT EXISTS `pms_token` (
 INSERT INTO `pms_token` (`user_id`, `session_token`, `session_access`) VALUES
 (1, 'testToken', ''),
 (2, 'testToken', 'pub'),
-(9, 'a5116a8d10b7b0419b00d313efa2aebc', '');
+(9, 'a5116a8d10b7b0419b00d313efa2aebc', ''),
+(13, '443e37d59a4ca8f164e6b5dc64968895', '');
 
 -- --------------------------------------------------------
 
@@ -64,14 +65,15 @@ CREATE TABLE IF NOT EXISTS `pms_user_base` (
   `password` varchar(32) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=11 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1001 ;
 
 --
 -- 转存表中的数据 `pms_user_base`
 --
 
 INSERT INTO `pms_user_base` (`user_id`, `email`, `password`) VALUES
-(9, 'ponycui@me.com', 'c4f34afe14817af7fbb175da2e609dd3');
+(9, 'ponycui@me.com', 'c4f34afe14817af7fbb175da2e609dd3'),
+(13, 'test@126.com', 'c4f34afe14817af7fbb175da2e609dd3');
 
 -- --------------------------------------------------------
 
@@ -92,3 +94,24 @@ CREATE TABLE IF NOT EXISTS `pms_user_information` (
 
 INSERT INTO `pms_user_information` (`user_id`, `nickname`, `avatar`) VALUES
 (9, 'PonyCui', 'http://tp4.sinaimg.cn/1961248227/180/5706181721/0');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `pms_user_relation`
+--
+
+CREATE TABLE IF NOT EXISTS `pms_user_relation` (
+  `relation_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `from_user_id` bigint(20) unsigned NOT NULL,
+  `to_user_id` bigint(20) unsigned NOT NULL,
+  PRIMARY KEY (`relation_id`),
+  KEY `from_user_id` (`from_user_id`,`to_user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+
+--
+-- 转存表中的数据 `pms_user_relation`
+--
+
+INSERT INTO `pms_user_relation` (`relation_id`, `from_user_id`, `to_user_id`) VALUES
+(1, 1, 9);

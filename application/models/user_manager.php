@@ -61,4 +61,25 @@ class User_manager extends CI_Model
         return $this->db->get()->result_array('User_info_entity');
     }
 
+    public function request_user_relations(User_entity $from_user_entity, User_entity $to_user_entity = null)
+    {
+        $this->db->from('user_relation');
+        $this->db->where('from_user_id', $from_user_entity->user_id);
+        if (!empty($to_user_entity)) {
+            $this->where('to_user_id', $to_user_entity->user_id);
+        }
+        $results = $this->db->get()->result_array('User_relation_entity');
+        if (!empty($results)) {
+            if (!empty($to_user_entity)) {
+                return array_pop($results);
+            }
+            else {
+                return $results;
+            }
+        }
+        else {
+            return array();
+        }
+    }
+
 }

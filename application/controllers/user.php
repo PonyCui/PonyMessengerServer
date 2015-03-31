@@ -10,6 +10,7 @@ class User extends CI_Controller
     {
         parent::__construct();
         $this->load->model('User_manager', '', true);
+        $this->load->model('Token_manager', '', true);
         $this->load->helper('Pms_output');
     }
 
@@ -68,6 +69,21 @@ class User extends CI_Controller
         }
         else {
             pms_output(null, -1, 'users not exist.');
+        }
+    }
+
+    //仅允许用户获取与自己相关的关系链
+    public function relation()
+    {
+        if (!pms_verify_token($this, $token_entity)) {
+            pms_output(null, -1, 'invalid token.');
+        }
+        else {
+
+            $from_user_entity = new User_entity;
+            $from_user_entity->user_id = $token_entity->user_id;
+            $result = $this->User_manager->request_user_relations($from_user_entity);
+            pms_output($result);
         }
     }
 }
