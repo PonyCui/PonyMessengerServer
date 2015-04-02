@@ -46,6 +46,21 @@ class User_manager extends CI_Model
         return false;
     }
 
+    /**
+     * @brief 搜索用户
+     * @return array -> user_id
+     **/
+    public function search_user($search_keyword)
+    {
+        $results = array();
+        $this->db->from('user_base');
+        $this->db->where('email', $search_keyword);
+        foreach ($this->db->get()->result('User_entity') as $row) {
+            $results[] = $row -> user_id;
+        }
+        return $results;
+    }
+
     public function request_user_information(User_info_entity $entity)
     {
         $this->db->from('user_information');
@@ -58,7 +73,7 @@ class User_manager extends CI_Model
     {
         $this->db->from('user_information');
         $this->db->where_in('user_id', $ids);
-        return $this->db->get()->result_array('User_info_entity');
+        return $this->db->get()->result('User_info_entity');
     }
 
     public function request_user_relations(User_entity $from_user_entity, User_entity $to_user_entity = null)
@@ -68,7 +83,7 @@ class User_manager extends CI_Model
         if (!empty($to_user_entity)) {
             $this->where('to_user_id', $to_user_entity->user_id);
         }
-        $results = $this->db->get()->result_array('User_relation_entity');
+        $results = $this->db->get()->result('User_relation_entity');
         if (!empty($results)) {
             if (!empty($to_user_entity)) {
                 return array_pop($results);

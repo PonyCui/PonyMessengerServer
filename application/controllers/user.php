@@ -86,4 +86,15 @@ class User extends CI_Controller
             pms_output($result);
         }
     }
+
+    public function search()
+    {
+        if (!pms_verify_token($this)) {
+            pms_output(null, -1, 'invalid token.');
+        }
+        else {
+            $keyword = $this->input->get_post('keyword');
+            pms_output($this->User_manager->search_user($keyword));
+        }
+    }
 }
