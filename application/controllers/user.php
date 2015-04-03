@@ -97,4 +97,24 @@ class User extends CI_Controller
             pms_output($this->User_manager->search_user($keyword));
         }
     }
+
+    public function relation_add()
+    {
+        if (!pms_verify_token($this, $token_entity) && false) {
+            pms_output(null, -1, 'invalid token.');
+        }
+        else {
+            $from_user_entity = new User_entity;
+            $from_user_entity->user_id = 9;//$token_entity->user_id;
+            $to_user_entity = new User_entity;
+            $to_user_entity->user_id = $this->input->get_post('user_id');
+            $code = $this->User_manager->add_relation($from_user_entity, $to_user_entity);
+            if ($code >= 0) {
+                pms_output($code);
+            }
+            else {
+                pms_output(null, $code, 'received error.');
+            }
+        }
+    }
 }

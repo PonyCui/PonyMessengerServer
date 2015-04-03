@@ -21,6 +21,15 @@ class Pub_manager extends CI_Model
         return $result;
     }
 
+    public function addNotify($user_id, $service, $method)
+    {
+        $message = new Pub_entity;
+        $message -> sub_user_id = $user_id;
+        $message -> sub_service = $service;
+        $message -> sub_method = $method;
+        $this -> addMessage($message);
+    }
+
     public function addMessage(Pub_entity $message)
     {
         $message -> pub_id = null;

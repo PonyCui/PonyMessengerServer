@@ -61,6 +61,17 @@ class User_manager extends CI_Model
         return $results;
     }
 
+    public function request_user(User_entity $entity)
+    {
+        $this->db->from('user_base');
+        $this->db->where('user_id', $entity->user_id);
+        return $this->db->get()->row(0, 'User_entity');
+    }
+
+    /**
+     * @brief 请求用户信息
+     * @return User_information_entity
+     **/
     public function request_user_information(User_info_entity $entity)
     {
         $this->db->from('user_information');
@@ -69,6 +80,10 @@ class User_manager extends CI_Model
         return $entity;
     }
 
+    /**
+     * @brief 请求多个用户信息
+     * @return array -> User_information_entity
+     **/
     public function request_users_information($ids)
     {
         $this->db->from('user_information');
@@ -76,12 +91,16 @@ class User_manager extends CI_Model
         return $this->db->get()->result('User_info_entity');
     }
 
+    /**
+     * @brief 查询用户关系
+     * @return array -> User_relation_entity
+     **/
     public function request_user_relations(User_entity $from_user_entity, User_entity $to_user_entity = null)
     {
         $this->db->from('user_relation');
         $this->db->where('from_user_id', $from_user_entity->user_id);
         if (!empty($to_user_entity)) {
-            $this->where('to_user_id', $to_user_entity->user_id);
+            $this->db->where('to_user_id', $to_user_entity->user_id);
         }
         $results = $this->db->get()->result('User_relation_entity');
         if (!empty($results)) {
@@ -94,6 +113,62 @@ class User_manager extends CI_Model
         }
         else {
             return array();
+        }
+    }
+
+    /**
+     * @brief 请求添加关系
+     * @return int {
+     * Need user agree = 1,
+     * Succeed = 0
+     * User not exist = -1
+     * User disallow add contact = -3,
+     * Unknown error = -99
+     * }
+     **/
+    public function add_relation(User_entity $from_user_entity, User_entity $to_user_entity)
+    {
+        $exist_relation_entity = $this->request_user_relations($from_user_entity, $to_user_entity);
+        $exist_user_entity = $this->request_user($to_user_entity);
+        if (empty($exist_user_entity)) {
+            return -1;
+        }
+        else if (!empty($exist_relation_entity)) {
+            return 0;
+        }
+        else if ($this->_user_default($to_user_entity)->privacy_contact_need_agree) {
+            //Need user agree
+            return -2;
+        }
+        else {
+            $relation_entity = new User_relation_entity;
+            $relation_entity->from_user_id = $from_user_entity->user_id;
+            $relation_entity->to_user_id = $to_user_entity->user_id;
+            $this->db->insert('user_relation', $relation_entity);
+            if ($this->db->affected_rows() > 0) {
+                $this->load->model('Pub_manager', '', true);
+                $this->Pub_manager->addNotify($from_user_entity->user_id, 'user', 'didChangeRelation');
+                $this->Pub_manager->addNotify($to_user_entity->user_id, 'user', 'didChangeRelation');
+                return 0;
+            }
+            else {
+                return -99;
+            }
+        }
+    }
+
+    private function _user_default(User_entity $user_entity)
+    {
+        $this->db->from('user_default');
+        $this->db->where('user_id', $user_entity->user_id);
+        $result = $this->db->get()->row(0, 'User_default_entity');
+        if (!empty($result)) {
+            return $result;
+        }
+        else {
+            $entity = new User_default_entity;
+            $entity->user_id = $user_entity->user_id;
+            return $entity;
         }
     }
 

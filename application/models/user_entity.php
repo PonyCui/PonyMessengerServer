@@ -43,3 +43,14 @@ class User_relation_entity
 
     public $to_user_id = '';
 }
+
+/**
+ *
+ */
+class User_default_entity
+{
+
+    public $user_id = null;
+
+    public $privacy_contact_need_agree = false;
+}
