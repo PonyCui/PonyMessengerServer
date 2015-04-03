@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: 127.0.0.1
--- 生成日期: 2015 年 04 月 03 日 02:53
+-- 生成日期: 2015 年 04 月 03 日 13:30
 -- 服务器版本: 5.6.14
 -- PHP 版本: 5.5.14
 
@@ -13,6 +13,25 @@ SET time_zone = "+00:00";
 --
 -- 数据库: `pms`
 --
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `pms_chat_record`
+--
+
+CREATE TABLE IF NOT EXISTS `pms_chat_record` (
+  `record_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `from_user_id` bigint(20) unsigned NOT NULL,
+  `to_user_id` bigint(20) unsigned NOT NULL,
+  `record_time` int(10) unsigned NOT NULL,
+  `record_type` enum('0','1','2','3','4','5') COLLATE utf16_bin NOT NULL,
+  `record_title` text COLLATE utf16_bin NOT NULL,
+  `record_params` text COLLATE utf16_bin NOT NULL,
+  `record_hash` varchar(32) COLLATE utf16_bin NOT NULL,
+  PRIMARY KEY (`record_id`),
+  KEY `from_user_id` (`from_user_id`,`to_user_id`,`record_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_bin AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -28,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `pms_pub` (
   `sub_params` text NOT NULL,
   PRIMARY KEY (`pub_id`),
   KEY `sub_user_id` (`sub_user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=12172 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -124,7 +143,7 @@ CREATE TABLE IF NOT EXISTS `pms_user_relation` (
   `to_user_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`relation_id`),
   KEY `from_user_id` (`from_user_id`,`to_user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
 
 --
 -- 转存表中的数据 `pms_user_relation`
@@ -132,5 +151,6 @@ CREATE TABLE IF NOT EXISTS `pms_user_relation` (
 
 INSERT INTO `pms_user_relation` (`relation_id`, `from_user_id`, `to_user_id`) VALUES
 (1, 1, 9),
+(12, 9, 13),
 (2, 9, 1000),
 (6, 9, 1001);
