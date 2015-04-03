@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: 127.0.0.1
--- 生成日期: 2015 年 04 月 03 日 13:30
+-- 生成日期: 2015 年 04 月 03 日 15:15
 -- 服务器版本: 5.6.14
--- PHP 版本: 5.5.14
+-- PHP 版本: 5.4.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -22,6 +22,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `pms_chat_record` (
   `record_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `session_id` varchar(64) COLLATE utf16_bin NOT NULL,
   `from_user_id` bigint(20) unsigned NOT NULL,
   `to_user_id` bigint(20) unsigned NOT NULL,
   `record_time` int(10) unsigned NOT NULL,
@@ -31,7 +32,15 @@ CREATE TABLE IF NOT EXISTS `pms_chat_record` (
   `record_hash` varchar(32) COLLATE utf16_bin NOT NULL,
   PRIMARY KEY (`record_id`),
   KEY `from_user_id` (`from_user_id`,`to_user_id`,`record_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_bin AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf16 COLLATE=utf16_bin AUTO_INCREMENT=3 ;
+
+--
+-- 转存表中的数据 `pms_chat_record`
+--
+
+INSERT INTO `pms_chat_record` (`record_id`, `session_id`, `from_user_id`, `to_user_id`, `record_time`, `record_type`, `record_title`, `record_params`, `record_hash`) VALUES
+(1, '9.1000', 1000, 9, 1000, '1', 0x313233343536, '', 'bczbvfdgsdf'),
+(2, '9.1000', 1000, 9, 2000, '1', 0x313233313233, '', 'gfdgsdf');
 
 -- --------------------------------------------------------
 

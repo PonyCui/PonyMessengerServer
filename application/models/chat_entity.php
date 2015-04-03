@@ -17,6 +17,8 @@ class Chat_record_entity
 
     public $record_id = null;
 
+    public $session_id = '';
+
     public $from_user_id = 0;
 
     public $to_user_id = 0;
