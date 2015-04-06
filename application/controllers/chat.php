@@ -15,6 +15,19 @@ class Chat extends CI_Controller
         $this->load->helper('Pms_output');
     }
 
+    public function sessions()
+    {
+        if (!pms_verify_token($this, $token_entity)) {
+            pms_output(null, -1, 'invalid token.');
+        }
+        else {
+            $user_entity = new User_entity;
+            $user_entity->user_id = $token_entity->user_id;
+            $sessions = $this->Chat_manager->all_sessions($user_entity);
+            pms_output($sessions);
+        }
+    }
+
     public function records()
     {
         $etag = intval($this->input->get_post('etag'));
@@ -25,7 +38,7 @@ class Chat extends CI_Controller
             $user_entity = new User_entity;
             $user_entity->user_id = $token_entity->user_id;
             $records = array();
-            if (!empty($etag)) {
+            if (empty($etag)) {
                 $records = $this->Chat_manager->recent_records($user_entity);
             }
             else {
@@ -36,4 +49,18 @@ class Chat extends CI_Controller
             pms_output($records);
         }
     }
+
+    /**
+     * @brief 发起一组会话
+     **/
+    public function raise()
+    {
+        $user_ids = $this->input->get_post('ids');
+        
+    }
+
+    // public function say()
+    // {
+    //
+    // }
 }

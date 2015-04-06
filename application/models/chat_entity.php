@@ -8,6 +8,19 @@ class Chat_entity
 
 }
 
+/**
+ *
+ */
+class Chat_session_entity
+{
+
+    public $session_id = null;
+
+    /**
+     * array -> User_entity
+     **/
+    public $session_users = array();
+}
 
 /**
  *
@@ -17,11 +30,9 @@ class Chat_record_entity
 
     public $record_id = null;
 
-    public $session_id = '';
+    public $session_id = 0;
 
     public $from_user_id = 0;
-
-    public $to_user_id = 0;
 
     public $record_time = 0;
 
