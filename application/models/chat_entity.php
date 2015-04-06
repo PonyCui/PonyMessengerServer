@@ -17,7 +17,7 @@ class Chat_session_entity
     public $session_id = null;
 
     /**
-     * array -> User_entity
+     * array -> User_info_entity
      **/
     public $session_users = array();
 }

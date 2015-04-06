@@ -109,7 +109,7 @@ $autoload['language'] = array();
 |
 */
 
-$autoload['model'] = array('Pub_entity', 'Sub_entity', 'Token_entity', 'User_entity');
+$autoload['model'] = array('Pub_entity', 'Sub_entity', 'Token_entity', 'User_entity', 'Chat_entity');
 
 
 /* End of file autoload.php */
