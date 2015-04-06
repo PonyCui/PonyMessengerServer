@@ -117,6 +117,32 @@ class User_manager extends CI_Model
     }
 
     /**
+     * 检查给定用户是否与后者均存在关系
+     * @param  User_entity $from_user_entity
+     * @param  Array       $to_user_entities array -> User_entity
+     * @return bool
+     */
+    public function check_user_relations($from_user_entity, $to_user_entities)
+    {
+        $user_ids = array();
+        foreach ($to_user_entities as $user_entity) {
+            if ($user_entity->user_id == $from_user_entity->user_id) {
+                continue;
+            }
+            $user_ids[] = $user_entity->user_id;
+        }
+        $this->db->from('user_relation');
+        $this->db->where('from_user_id', $from_user_entity->user_id);
+        $this->db->where_in('to_user_id', $user_ids);
+        if (count($user_ids) == $this->db->count_all_results()) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
      * @brief 请求添加关系
      * @return int {
      * Need user agree = 1,

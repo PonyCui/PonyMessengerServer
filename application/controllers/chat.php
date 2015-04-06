@@ -55,16 +55,25 @@ class Chat extends CI_Controller
      **/
     public function raise()
     {
-        $user_ids = $this->input->get_post('ids');
-        $session_users = array();
-        foreach (explode(',', $user_ids) as $user_id) {
-            $session_user = new Chat_session_user_entity;
-            $session_user -> user_id = $user_id;
-            $session_users[] = $session_user;
+        if (!pms_verify_token($this, $token_entity)) {
+            pms_output(null, -1, 'invalid token.');
         }
-        $session = new Chat_session_entity;
-        $session->session_users = $session_users;
-        $this->Chat_manager->create_session($session);
+        else {
+            $user_entity = new User_entity;
+            $user_entity->user_id = $token_entity->user_id;
+            $user_ids = $this->input->get_post('ids');
+            $session_users = array();
+            foreach (explode(',', $user_ids) as $user_id) {
+                $session_user = new Chat_session_user_entity;
+                $session_user -> user_id = $user_id;
+                $session_users[] = $session_user;
+            }
+            $session = new Chat_session_entity;
+            $session->session_users = $session_users;
+            $this->Chat_manager->create_session($user_entity, $session);
+            // pms_output($records);
+        }
+
     }
 
     /**

@@ -69,7 +69,7 @@ class Chat_manager extends CI_Model
     * @brief 创建一个会话
     * @return Chat_session_entity
     **/
-    public function create_session(Chat_session_entity $session)
+    public function create_session(User_entity $user, Chat_session_entity $session)
     {
         if (count($session->session_users) < 2) {
             return $session;
@@ -82,15 +82,18 @@ class Chat_manager extends CI_Model
             }
         }
         //多人会话，直接创建
-        $this->db->insert('chat_session', $session);
-        if ($this->db->affected_rows() > 0) {
-            $session->session_id = $this->db->insert_id();
-        }
-        foreach ($session->session_users as $user_entity) {
-            $session_user = new Chat_session_user_entity;
-            $session_user->session_id = $session->session_id;
-            $session_user->user_id = $user_entity->user_id;
-            $this->db->insert('chat_session_user', $session_user);
+        $this->load->model('User_manager');
+        if ($this->User_manager->check_user_relations($user, $session->session_users)) {
+            $this->db->insert('chat_session', $session);
+            if ($this->db->affected_rows() > 0) {
+                $session->session_id = $this->db->insert_id();
+            }
+            foreach ($session->session_users as $user_entity) {
+                $session_user = new Chat_session_user_entity;
+                $session_user->session_id = $session->session_id;
+                $session_user->user_id = $user_entity->user_id;
+                $this->db->insert('chat_session_user', $session_user);
+            }
         }
         return $session;
     }
@@ -159,22 +162,6 @@ class Chat_manager extends CI_Model
             $session_ids[] = $row['session_id'];
         }
         return $session_ids;
-    }
-
-    /**
-     * @brief  获取指定session中的所有用户ID
-     * @param  int $session_id
-     * @return array array->int
-     */
-    private function _session_users_ids($session_id)
-    {
-        $this->db->from('chat_session_user');
-        $this->db->select('user_id');
-        $user_ids = array();
-        foreach ($this->db->get()->result_array() as $row) {
-            $user_ids[] = $row['user_id'];
-        }
-        return $user_ids;
     }
 
 }
