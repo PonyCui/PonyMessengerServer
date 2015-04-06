@@ -62,6 +62,7 @@ class Chat extends CI_Controller
             $user_entity = new User_entity;
             $user_entity->user_id = $token_entity->user_id;
             $user_ids = $this->input->get_post('ids');
+            $user_ids .= ','.$user_entity->user_id;
             $session_users = array();
             foreach (explode(',', $user_ids) as $user_id) {
                 $session_user = new Chat_session_user_entity;
@@ -70,8 +71,14 @@ class Chat extends CI_Controller
             }
             $session = new Chat_session_entity;
             $session->session_users = $session_users;
-            $this->Chat_manager->create_session($user_entity, $session);
-            // pms_output($records);
+            $session = $this->Chat_manager->create_session($user_entity, $session);
+            if (!empty($session->session_id)) {
+                pms_output($session);
+            }
+            else {
+                pms_output(null, -2, 'fail to create sesssion.');
+            }
+
         }
 
     }
