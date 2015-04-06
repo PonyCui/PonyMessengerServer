@@ -56,14 +56,14 @@ class Chat extends CI_Controller
     public function raise()
     {
         $user_ids = $this->input->get_post('ids');
-        $user_entities = array();
+        $session_users = array();
         foreach (explode(',', $user_ids) as $user_id) {
-            $user_entity = new User_info_entity;
-            $user_entity -> user_id = $user_id;
-            $user_entities[] = $user_entity;
+            $session_user = new Chat_session_user_entity;
+            $session_user -> user_id = $user_id;
+            $session_users[] = $session_user;
         }
         $session = new Chat_session_entity;
-        $session->session_users = $user_entities;
+        $session->session_users = $session_users;
         $this->Chat_manager->create_session($session);
     }
 

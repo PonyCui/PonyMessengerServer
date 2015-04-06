@@ -26,54 +26,73 @@ class Chat_manager extends CI_Model
     }
 
     /**
+     * @brief 请求完整的session信息
+     * @param  Chat_session_entity $session
+     * @return Chat_session_entity
+     */
+    public function request_session(Chat_session_entity $session)
+    {
+        if (!empty($session->session_id) && empty($session->session_users)) {
+            //请求users
+            $this->db->from('chat_session_user');
+            $this->db->where('session_id', $session->session_id);
+            $this->session_users = $this->db->get()->result('Chat_session_user_entity');
+            return $session;
+        }
+        else if (empty($session->session_id) && !empty($session->session_users)) {
+            //请求session_id
+            $session_ids = array();
+            foreach ($session->session_users as $session_user) {
+                $session_ids[] = $session_user->user_id;
+            }
+            $this->db->from('chat_session_user');
+            $this->db->where_in('user_id', $session_ids);
+            $this->db->order_by('session_id', 'asc');
+            $result = $this->db->get()->result('Chat_session_user_entity');
+            foreach ($result as $key => $value) {
+                if ($key == 0) {
+                    continue;
+                }
+                else if ($value->session_id == $result[$key-1]->session_id) {
+                    $session->session_id = $value->session_id;
+                    break;
+                }
+            }
+            return $session;
+        }
+        else {
+            return $session;
+        }
+    }
+
+    /**
     * @brief 创建一个会话
     * @return Chat_session_entity
     **/
     public function create_session(Chat_session_entity $session)
     {
         if (count($session->session_users) < 2) {
-            return false;
+            return $session;
         }
         else if (count($session->session_users) == 2) {
             //双人会话，先查询后创建
-            $session_ids = array();
-            foreach ($session->session_users as $user_entity) {
-                $session_ids[] = $user_entity -> user_id;
+            $session = $this->request_session($session);
+            if (!empty($session->session_id)) {
+                return $session;
             }
-            $this->db->from('chat_session_user');
-            $this->db->where_in('user_id', $session_ids);
-            $this->db->order_by('session_id', 'asc');
-            $result = $this->db->get()->result_array();
-            foreach ($result as $key => $value) {
-                if ($key == 0) {
-                    continue;
-                }
-                else if ($value['session_id'] == $result[$key-1]['session_id']) {
-                    $session->session_id = $value['session_id'];
-                    return $session;
-                }
-            }
-            //create session
-            $this->db->insert('chat_session', $session);
-            if ($this->db->affected_rows() > 0) {
-                $session->session_id = $this->db->insert_id();
-            }
-            foreach ($session->session_users as $user_entity) {
-                $this->db->insert('chat_session_user', array('session_id'=>$session->session_id, 'user_id'=>$user_entity->user_id));
-            }
-            return $session;
         }
-        else {
-            //多人会话，直接创建
-            $this->db->insert('chat_session', $session);
-            if ($this->db->affected_rows() > 0) {
-                $session->session_id = $this->db->insert_id();
-            }
-            foreach ($session->session_users as $user_entity) {
-                $this->db->insert('chat_session_user', array('session_id'=>$session->session_id, 'user_id'=>$user_entity->user_id));
-            }
-            return $session;
+        //多人会话，直接创建
+        $this->db->insert('chat_session', $session);
+        if ($this->db->affected_rows() > 0) {
+            $session->session_id = $this->db->insert_id();
         }
+        foreach ($session->session_users as $user_entity) {
+            $session_user = new Chat_session_user_entity;
+            $session_user->session_id = $session->session_id;
+            $session_user->user_id = $user_entity->user_id;
+            $this->db->insert('chat_session_user', $session_user);
+        }
+        return $session;
     }
 
     /**
