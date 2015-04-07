@@ -86,8 +86,25 @@ class Chat extends CI_Controller
     /**
      * @brief 发表一条言论
      */
-    public function talk()
+    public function post()
     {
-
+        if (!pms_verify_token($this, $token_entity)) {
+            pms_output(null, -1, 'invalid token.');
+        }
+        else {
+            $this->load->helper('pms_input_helper');
+            $user_entity = new User_entity;
+            $user_entity->user_id = $token_entity->user_id;
+            $record = pms_input($this, 'Chat_record_entity');
+            $record->from_user_id = $token_entity->user_id;
+            $record->record_time = time();
+            $isSucceed = $this->Chat_manager->create_record($user_entity, $record);
+            if ($isSucceed) {
+                pms_output(null);
+            }
+            else {
+                pms_output(null, -2, 'unknown error.');
+            }
+        }
     }
 }

@@ -83,6 +83,7 @@ class Chat_manager extends CI_Model
         }
         //多人会话，直接创建
         $this->load->model('User_manager');
+        $this->load->model('Pub_manager');
         if ($this->User_manager->check_user_relations($user, $session->session_users)) {
             $this->db->insert('chat_session', $session);
             if ($this->db->affected_rows() > 0) {
@@ -93,32 +94,12 @@ class Chat_manager extends CI_Model
                 $session_user->session_id = $session->session_id;
                 $session_user->user_id = $user_entity->user_id;
                 $this->db->insert('chat_session_user', $session_user);
+                if ($this->db->affected_rows() > 0) {
+                    $this->Pub_manager->addNotify($user_entity->user_id, 'chat', 'didUpdateSession');
+                }
             }
         }
         return $session;
-    }
-
-    /**
-     * @brief 创建一条言论
-     * @param  Chat_record_entity $record
-     * @return Bool
-     */
-    public function create_record(Chat_record_entity $record)
-    {
-        unset($record->record_id);
-        $this->db->insert('chat_record', $record);
-        $is_succeed = $this->db->affected_rows() > 0;
-        if ($is_succeed) {
-            $this->load->model('Pub_manager');
-            //Notify session users
-            foreach ($this->_session_users_ids($record->session_id) as $user_id) {
-                $this->Pub_manager->addNotify($user_id, 'chat', 'didAddRecord');
-            }
-            return true;
-        }
-        else {
-            return false;
-        }
     }
 
     /**
@@ -149,6 +130,37 @@ class Chat_manager extends CI_Model
     }
 
     /**
+     * @brief 创建一条言论
+     * @param  Chat_record_entity $record
+     * @return Bool
+     */
+    public function create_record(User_entity $user, Chat_record_entity $record)
+    {
+        unset($record->record_id);
+        $sessions = $this->_user_sessions_ids($user);
+        if (in_array($record->session_id, $sessions)) {
+            $this->db->insert('chat_record', $record);
+            if ($this->db->affected_rows() > 0) {
+                $this->load->model('Pub_manager');
+                $session = new Chat_session_entity;
+                $session->session_id = $record->session_id;
+                $session = $this->request_session($session);
+                $this->Pub_manager->addNotify($record->from_user_id, 'chat', 'didAddRecord');
+                foreach ($session->session_users as $session_user) {
+                    $this->Pub_manager->addNotify($session_user->user_id, 'chat', 'didAddRecord');
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
      * @brief 获取指定user中的所有会话ID
      * @param  User_entity $user
      * @return array array->int
@@ -157,6 +169,7 @@ class Chat_manager extends CI_Model
     {
         $this->db->from('chat_session_user');
         $this->db->select('session_id');
+        $this->db->where('user_id', $user->user_id);
         $session_ids = array();
         foreach ($this->db->get()->result_array() as $row) {
             $session_ids[] = $row['session_id'];
