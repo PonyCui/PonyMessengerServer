@@ -15,7 +15,7 @@ class Chat extends CI_Controller
         $this->load->helper('Pms_output');
     }
 
-    public function sessions()
+    public function session()
     {
         if (!pms_verify_token($this, $token_entity)) {
             pms_output(null, -1, 'invalid token.');
@@ -23,7 +23,26 @@ class Chat extends CI_Controller
         else {
             $user_entity = new User_entity;
             $user_entity->user_id = $token_entity->user_id;
-            $sessions = $this->Chat_manager->all_sessions($user_entity);
+            $session = $this->Chat_manager->session_with_id($user_entity, $this->input->get_post('id'));
+            if (!empty($session->session_id)) {
+                pms_output($session);
+            }
+            else {
+                pms_output(null, -2, 'fail to get session');
+            }
+        }
+    }
+
+    public function sessions()
+    {
+        if (!pms_verify_token($this, $token_entity)) {
+            pms_output(null, -1, 'invalid token.');
+        }
+        else {
+            $etag = $this->input->get_post('etag');
+            $user_entity = new User_entity;
+            $user_entity->user_id = $token_entity->user_id;
+            $sessions = $this->Chat_manager->all_sessions($user_entity, $etag);
             pms_output($sessions);
         }
     }
@@ -63,22 +82,14 @@ class Chat extends CI_Controller
             $user_entity->user_id = $token_entity->user_id;
             $user_ids = $this->input->get_post('ids');
             $user_ids .= ','.$user_entity->user_id;
-            $session_users = array();
-            foreach (explode(',', $user_ids) as $user_id) {
-                $session_user = new Chat_session_user_entity;
-                $session_user -> user_id = $user_id;
-                $session_users[] = $session_user;
-            }
-            $session = new Chat_session_entity;
-            $session->session_users = $session_users;
-            $session = $this->Chat_manager->create_session($user_entity, $session);
+            $user_ids = explode(',', $user_ids);
+            $session = $this->Chat_manager->session_with_user_ids($user_entity, $user_ids);
             if (!empty($session->session_id)) {
                 pms_output($session);
             }
             else {
                 pms_output(null, -2, 'fail to create sesssion.');
             }
-
         }
 
     }

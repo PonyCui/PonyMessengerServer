@@ -125,11 +125,19 @@ class User_manager extends CI_Model
     public function check_user_relations($from_user_entity, $to_user_entities)
     {
         $user_ids = array();
-        foreach ($to_user_entities as $user_entity) {
-            if ($user_entity->user_id == $from_user_entity->user_id) {
-                continue;
+        if (is_numeric($to_user_entities[0])) {
+            $user_ids = $to_user_entities;
+        }
+        else {
+            foreach ($to_user_entities as $user_entity) {
+                if ($user_entity->user_id == $from_user_entity->user_id) {
+                    continue;
+                }
+                $user_ids[] = $user_entity->user_id;
             }
-            $user_ids[] = $user_entity->user_id;
+        }
+        if (in_array($from_user_entity->user_id, $user_ids)) {
+            unset($user_ids[array_search($from_user_entity->user_id, $user_ids)]);
         }
         $this->db->from('user_relation');
         $this->db->where('from_user_id', $from_user_entity->user_id);

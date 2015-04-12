@@ -16,6 +16,18 @@ class Chat_session_entity
 
     public $session_id = null;
 
+    public $session_type = 1;
+
+    public $session_title = '';
+
+    public $session_icon = '';
+
+    public $session_last_update = 0;
+
+    public $session_last_post = '';
+
+    public $session_user_ids = array();
+
     /**
      * array -> Chat_session_user_entity
      **/

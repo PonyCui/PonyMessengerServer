@@ -6,7 +6,8 @@ function pms_input($controller, $class_name, $method = 'get|post')
     $methods = explode('|', $method);
     $params = array();
     foreach ($methods as $method) {
-        if (!empty($controller->input->$method())) {
+        $methodParams = $controller->input->$method();
+        if (!empty($methodParams)) {
             $params = array_merge($params, $controller->input->$method());
         }
     }
