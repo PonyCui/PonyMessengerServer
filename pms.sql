@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: 127.0.0.1
--- 生成日期: 2015 年 04 月 12 日 15:42
+-- 生成日期: 2015 年 06 月 04 日 14:32
 -- 服务器版本: 5.6.14
 -- PHP 版本: 5.4.38
 
@@ -32,20 +32,7 @@ CREATE TABLE IF NOT EXISTS `pms_chat_record` (
   PRIMARY KEY (`record_id`),
   KEY `from_user_id` (`from_user_id`,`record_time`),
   KEY `session_id` (`session_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf16 COLLATE=utf16_bin AUTO_INCREMENT=8 ;
-
---
--- 转存表中的数据 `pms_chat_record`
---
-
-INSERT INTO `pms_chat_record` (`record_id`, `session_id`, `from_user_id`, `record_time`, `record_type`, `record_title`, `record_params`, `record_hash`) VALUES
-(1, 1, 9, 1428853195, '1', '123', '', '264017926336579595151848154497'),
-(2, 1, 9, 1428853210, '1', '321', '', '37293693123847332254438655083'),
-(3, 1, 9, 1428853226, '1', '123', '', '282540656727687900584273037814'),
-(4, 1, 9, 1428853306, '1', '123', '', '3801722200410828818101363833'),
-(5, 1, 9, 1428853316, '1', '123123132', '', '399076874942167133553243122839'),
-(6, 1, 9, 1428853326, '1', '123123321213312', '', '40004609925617231064012345307'),
-(7, 1, 9, 1428853334, '1', '321312312312', '', '13546686328461115022446200617');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
 -- --------------------------------------------------------
 
@@ -62,14 +49,7 @@ CREATE TABLE IF NOT EXISTS `pms_chat_session` (
   `session_last_post` varchar(64) NOT NULL,
   PRIMARY KEY (`session_id`),
   KEY `session_last_update` (`session_last_update`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
-
---
--- 转存表中的数据 `pms_chat_session`
---
-
-INSERT INTO `pms_chat_session` (`session_id`, `session_type`, `session_title`, `session_icon`, `session_last_update`, `session_last_post`) VALUES
-(1, '1', '', '', 1428853334, '321312312312');
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -82,14 +62,6 @@ CREATE TABLE IF NOT EXISTS `pms_chat_session_user` (
   `user_id` bigint(20) unsigned NOT NULL,
   KEY `session_id` (`session_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- 转存表中的数据 `pms_chat_session_user`
---
-
-INSERT INTO `pms_chat_session_user` (`session_id`, `user_id`) VALUES
-(1, 9),
-(1, 1000);
 
 -- --------------------------------------------------------
 
@@ -105,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `pms_pub` (
   `sub_params` text NOT NULL,
   PRIMARY KEY (`pub_id`),
   KEY `sub_user_id` (`sub_user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=38 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -120,16 +92,6 @@ CREATE TABLE IF NOT EXISTS `pms_token` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- 转存表中的数据 `pms_token`
---
-
-INSERT INTO `pms_token` (`user_id`, `session_token`, `session_access`) VALUES
-(1, 'testToken', ''),
-(2, 'testToken', 'pub'),
-(9, 'a5116a8d10b7b0419b00d313efa2aebc', ''),
-(13, '443e37d59a4ca8f164e6b5dc64968895', '');
-
 -- --------------------------------------------------------
 
 --
@@ -142,17 +104,7 @@ CREATE TABLE IF NOT EXISTS `pms_user_base` (
   `password` varchar(32) NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1002 ;
-
---
--- 转存表中的数据 `pms_user_base`
---
-
-INSERT INTO `pms_user_base` (`user_id`, `email`, `password`) VALUES
-(9, 'ponycui@me.com', 'c4f34afe14817af7fbb175da2e609dd3'),
-(13, 'test@126.com', 'c4f34afe14817af7fbb175da2e609dd3'),
-(1000, 'test@test.com', '123456'),
-(1001, 'test2@test.com', '123456');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -179,16 +131,6 @@ CREATE TABLE IF NOT EXISTS `pms_user_information` (
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16 COLLATE=utf16_bin;
 
---
--- 转存表中的数据 `pms_user_information`
---
-
-INSERT INTO `pms_user_information` (`user_id`, `nickname`, `avatar`) VALUES
-(9, 'PonyCui', 'http://tp4.sinaimg.cn/1961248227/180/5706181721/0'),
-(13, '测试用户', 'http://tp1.sinaimg.cn/1199605160/180/5624382513/0'),
-(1000, '春哥233', 'http://tp1.sinaimg.cn/1199605160/180/5624382513/0'),
-(1001, 'Jake', 'http://tp4.sinaimg.cn/5571833295/180/5722160098/0');
-
 -- --------------------------------------------------------
 
 --
@@ -201,14 +143,4 @@ CREATE TABLE IF NOT EXISTS `pms_user_relation` (
   `to_user_id` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`relation_id`),
   KEY `from_user_id` (`from_user_id`,`to_user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
-
---
--- 转存表中的数据 `pms_user_relation`
---
-
-INSERT INTO `pms_user_relation` (`relation_id`, `from_user_id`, `to_user_id`) VALUES
-(1, 1, 9),
-(12, 9, 13),
-(2, 9, 1000),
-(6, 9, 1001);
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
