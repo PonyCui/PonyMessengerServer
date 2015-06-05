@@ -22,6 +22,11 @@ class User_manager extends CI_Model
         $this->db->insert('user_base', $entity);
         if ($this->db->affected_rows() > 0) {
             $entity->user_id=$this->db->insert_id();
+            $infoItem = new User_info_entity();
+            $infoItem->user_id = $entity->user_id;
+            $infoItem->nickname = 'Unknown';
+            $infoItem->avatar = 'http://tp3.sinaimg.cn/1898495494/180/40069970862/1';
+            $this->update_user_information($infoItem);
             return true;
         }
         else {
@@ -89,6 +94,23 @@ class User_manager extends CI_Model
         $this->db->from('user_information');
         $this->db->where_in('user_id', $ids);
         return $this->db->get()->result('User_info_entity');
+    }
+
+    /**
+     * @brief 更新用户信息
+     * @param  User_info_entity $infoItem
+     * @return bool
+     */
+    public function update_user_information(User_info_entity $infoItem)
+    {
+        $this->db->where('user_id', $infoItem->user_id);
+        $this->db->update('user_information', $infoItem);
+        if ($this->db->affected_rows() == 0) {
+            return $this->db->insert('user_information', $infoItem);
+        }
+        else {
+             return true;
+        }
     }
 
     /**
