@@ -197,11 +197,22 @@ class User_manager extends CI_Model
             return -2;
         }
         else {
-            $relation_entity = new User_relation_entity;
-            $relation_entity->from_user_id = $from_user_entity->user_id;
-            $relation_entity->to_user_id = $to_user_entity->user_id;
-            $this->db->insert('user_relation', $relation_entity);
-            if ($this->db->affected_rows() > 0) {
+            $affected_rows = 0;
+            {
+                $relation_entity = new User_relation_entity;
+                $relation_entity->from_user_id = $from_user_entity->user_id;
+                $relation_entity->to_user_id = $to_user_entity->user_id;
+                $affected_rows += $this->db->affected_rows();
+                $this->db->insert('user_relation', $relation_entity);
+            }
+            {
+                $relation_entity = new User_relation_entity;
+                $relation_entity->from_user_id = $to_user_entity->user_id;
+                $relation_entity->to_user_id = $from_user_entity->user_id;
+                $affected_rows += $this->db->affected_rows();
+                $this->db->insert('user_relation', $relation_entity);
+            }
+            if ($affected_rows >= 2) {
                 $this->load->model('Pub_manager', '', true);
                 $this->Pub_manager->addNotify($from_user_entity->user_id, 'user', 'didChangeRelation');
                 $this->Pub_manager->addNotify($to_user_entity->user_id, 'user', 'didChangeRelation');
